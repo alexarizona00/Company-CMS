@@ -6,8 +6,9 @@ var inquirer = require('inquirer');
 const mainPrompt = [
     {
         type: 'checkbox',
-        message: 'Company Overview',
-        name: 'whattodo',
-        choices: ['Apache License 2.0', 'GNU GPLv3', 'MIT', 'ISC License', 'GNU GPLv2',],
+        message: 'What can I help you with?',
+        name: 'whatToDo',
+        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role'],
     },
 ];
+
