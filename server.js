@@ -6,8 +6,8 @@ var inquirer = require('inquirer');
 const mainPrompt = [
     {
         type: 'checkbox',
-        message: 'Select Licenses',
-        name: 'license',
+        message: 'Company Overview',
+        name: 'whattodo',
         choices: ['Apache License 2.0', 'GNU GPLv3', 'MIT', 'ISC License', 'GNU GPLv2',],
     },
 ];
