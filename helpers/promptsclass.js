@@ -58,7 +58,7 @@ class Companyoverview {
                     , name: "deptname"
                 },
             ]).then(answers => {
-                connection.query(`INSERT INTO department (name_) VALUES ("${answers.newDepartName}");`), (error, results) => {
+                connection.query(`INSERT INTO department (name_) VALUES ("${answers.deptname}");`), (error, results) => {
                     if (error) {
                         return console.error(error.message);
                     }
