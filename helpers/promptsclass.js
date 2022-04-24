@@ -12,7 +12,7 @@ class Companyoverview {
                     type: 'rawlist',
                     name: 'whatsup',
                     message: 'What can I help you with?',
-                    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'EXIT'],
+                    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update employee role', 'EXIT'],
                 },
             ])
             .then((answers) => {
@@ -39,8 +39,8 @@ class Companyoverview {
                     this.addEmp()
 
                 }
-                if (answers.whatsup == 'Update an Employee') {
-                    this.addEmp()
+                if (answers.whatsup == 'Update employee role') {
+                    this.updateRole()
 
                 }
                 if (answers.whatsup == 'EXIT') {
@@ -60,8 +60,9 @@ class Companyoverview {
             ]).then(answers => {
                 connection.query(`INSERT INTO department (name_) VALUES ("${answers.newDepartName}");`), (error, results) => {
                     if (error) {
-                      return console.error(error.message);
-                    }}
+                        return console.error(error.message);
+                    }
+                }
                 console.log(`
                 ____________________________________________________
                 A new department has been added
@@ -96,9 +97,10 @@ class Companyoverview {
             ]).then(answers => {
                 connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id)
                 VALUES ("${answers.efname}","${answers.elname}",${answers.eroleid},${answers.emanagerid});`), (error, results) => {
-                    if (error) {
-                      return console.error(error.message);
-                    }}
+                        if (error) {
+                            return console.error(error.message);
+                        }
+                    }
                 console.log(`
                 ____________________________________________________
                 A new employee has been added
@@ -130,22 +132,97 @@ class Companyoverview {
                 VALUES ("${answers.roletitle}",${answers.rolesal}, ${answers.deptid});`), (error, results) => {
                         if (error) {
                             return console.error(error.message);
-                        }}
-                        console.log(`
+                        }
+                    }
+                console.log(`
                 ____________________________________________________
                 A new role has been added
                 ____________________________________________________                
                 `)
-                        this.overview()
+                this.overview()
 
-                    });
+            });
     };
+    updateRole() {
+        let query = "SELECT * FROM employee";
+        let employees = [];
+        connection.query(query, (err, res) => {
+            if (err) throw err;
 
+            for (let i = 0; i < res.length; i++) {
+                employees.push({
+                    name: res[i].first_name + " " + res[i].last_name,
+                    value: res[i].id,
+                });
+            }
+
+            let roles = [];
+            let query =
+                "SELECT company_role.id, company_role.title, company_role.salary, department.name_ from company_role inner JOIN department on company_role.department_id = department.id;";
+            connection.query(query, (err, res) => {
+                if (err) throw err;
+                for (let i = 0; i < res.length; i++) {
+                    roles.push({
+                        name: res[i].title,
+                        value: res[i].id,
+                    });
+                }
+            });
+            inquirer
+                .prompt([
+                    {
+                        type: "list",
+                        name: "upemp",
+                        message: "Which employee would you like to update?",
+                        choices: employees,
+                    },
+                    {
+                        type: "list",
+                        name: "uprole",
+                        message: "Which role would you like to assign?",
+                        choices: roles,
+                    },
+                ])
+                .then((answers) => {
+                    console.log(answers);
+                    let query = "UPDATE employee SET ? WHERE ?";
+                    connection.query(
+                        query,
+                        [
+                            {
+                                role_id: answers.uprole,
+                            },
+                            {
+                                id: answers.upemp,
+                            },
+                        ],
+
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log('\n');
+                            console.log('~~~~~Role has been updated!~~~~~');
+                            console.log('\n');
+                            console.log('\n');
+                            console.log('\n');
+                            console.log('PRESS SPACEBAR TO CONTINUE')
+                            console.log('\n');
+                            console.log('\n');
+
+
+                        }
+
+                    );
+                    this.overview()
+                });
+        });
+    }
 
 
 
 
 }
+
+
 
 module.exports = Companyoverview
 
